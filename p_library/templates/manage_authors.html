@@ -1,0 +1,17 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+ <meta charset="UTF-8">  
+ <title>Create multiple authors</title>  
+</head>  
+<body>  
+<form method="post">  
+	{% csrf_token %}  
+	{% for form in author_formset %}
+		{{ form.as_ul }}<!-- форма будет представлена в виде маркированного списка -->
+		<br>  
+	{% endfor %}
+    <input type="submit" value="Сохранить"/>  
+</form>  
+</body>  
+</html>
