@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<title>Список авторов</title>
+</head>
+<body>
+	<a class="btn btn-outline-info" href="{% url 'friend_list' %}">Список друзей</a>
+	<ul class="list-group list-group-item-info col-5">
+		{% for book in object_list %}
+		    <li class="list-group-item">
+				<strong>{{ book.title }}</strong>
+				{% if book.friend %}
+					<br /> <p class="font-italic">Книга на руках у друга по имени 
+								<strong>{{ book.friend.FIO }}</strong> </p>
+				{% endif %}
+				<p>
+					<a class="text-info" href="{% url 'book_edit' book.id %}">Редактировать</a>
+				</p>
+			</li>
+		{% endfor %}
+	</ul>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<title>Список друзей</title>
+</head>
+<body>
+	<ul class="list-group list-group-item-info col-5">
+		{% for friend in object_list %}
+		<li class="list-group-item">{{ friend.FIO }}, номер телефона: {{ friend.PhoneNumber }}</li>
+		{% endfor %}
+	</ul>
+	<p>
+		<a class="btn btn-outline-info" href="{% url 'friends_books' %}">Просмотреть, у кого мои книги</a>
+		<br />
+		<a class="btn btn-outline-info" href="{% url 'friend_create' %}">Добавить друга</a>
+	</p>
+</body>
+</html>

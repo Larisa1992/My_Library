@@ -1,12 +1,11 @@
-from django.shortcuts import render
-from p_library.models import Author  
-from p_library.forms import AuthorForm
+from django.shortcuts import render, redirect
+from p_library.models import Author, Friend, Book 
+from p_library.forms import AuthorForm, FriendForm, BookForm
 from django.views.generic import CreateView, ListView
 from django.urls import reverse_lazy
 
 from django.forms import formset_factory  #для работы с множеством форм на странице
 from django.http.response import HttpResponseRedirect
-
 
 class AuthorEdit(CreateView):  
     model = Author  
@@ -14,11 +13,26 @@ class AuthorEdit(CreateView):
     # success_url = reverse_lazy('p_library:author_list')
     success_url = reverse_lazy('author_list')
     template_name = 'author_edit.html'  
-  
-  
+    
 class AuthorList(ListView):  
     model = Author  
     template_name = 'authors_list.html'
+
+#форма создния друзей
+class FriendEdit(CreateView):  
+    model = Friend  
+    form_class = FriendForm  
+    success_url = reverse_lazy('friend_list')
+    template_name = 'friends_edit.html'
+
+class FriendList(ListView):  
+    model = Friend 
+    success_url = reverse_lazy('friends_books') #в случае успеха перенаправляем на страницу друзей и книг
+    template_name = 'friends_list.html'
+#   
+class BookList(ListView):
+    model = Book
+    template_name = 'books_list.html'
 
 def author_create_many(request):  
     AuthorFormSet = formset_factory(AuthorForm, extra=2)  #  Первым делом, получим класс, который будет создавать наши формы. Обратите внимание на параметр `extra`, в данном случае он равен двум, это значит, что на странице с несколькими формами изначально будет появляться 2 формы создания авторов.
@@ -30,8 +44,8 @@ def author_create_many(request):
             return HttpResponseRedirect(reverse_lazy('p_library:author_list'))  #  После чего, переадресуем браузер на список всех авторов.
     else:  #  Если обработчик получил GET запрос, значит в ответ нужно просто "нарисовать" формы.
         author_formset = AuthorFormSet(prefix='authors')  #  Инициализируем формсет и ниже передаём его в контекст шаблона.
-    conrext = {'author_formset': author_formset} # обязательно должен быть словать
-    return render(request, 'manage_authors.html', conrext)
+    context = {'author_formset': author_formset} # обязательно должен быть словать
+    return render(request, 'manage_authors.html', context)
 
 def books_authors_create_many(request):  
     AuthorFormSet = formset_factory(AuthorForm, extra=2)  
@@ -56,3 +70,28 @@ def books_authors_create_many(request):
 			'book_formset': book_formset,  
 		}  
 	)
+
+def friends_books(request):
+    fr = Friend.objects.all()
+    all_books = Book.objects.all()
+    # if request.method != 'POST':
+    #     fr = Friend.objects.all()
+    context = {'fr': fr, 'all_books' : all_books}
+    # return HttpResponseRedirect(reverse_lazy('p_library:friends_books'))
+    return render(request, 'manage_friend_books.html', context)
+
+def book_edit(request, book_id):
+    """ редактируем книгу """
+    book = Book.objects.get(id=book_id)
+    fr = book.friend # ссылка на друга по внешнему ключу
+
+    if request.method != 'POST':
+        form = BookForm(instance=book) # ссылка на друга по внешнему ключу
+    else:
+        form = BookForm(instance=book, data = request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('books_list')
+    # вывести пустую или недействительную форму
+    context = {'book': book, 'fr': fr, 'form' : form }
+    return render(request, 'edit_book.html', context)

@@ -1,0 +1,24 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+ <meta charset="UTF-8">
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+ <title>Friend and Books</title>  
+</head>  
+<body>
+  <ul class="list-group list-group-item-info col-5">
+    {% for ob_fr in fr %}
+    <li class="list-group-item"><strong>{{ ob_fr.FIO }}</strong></li>
+    <ul class="list-group">
+      {% for book in ob_fr.friend_books.all %}
+        <li class="list-group-item"> Книга: {{ book.title }} </li>
+      {% empty %}
+      <li class="list-group-item">не брал книги</li>
+      {% endfor %} 
+    </ul>
+    {% endfor %} 
+  </ul>
+  <p><a class="btn btn-outline-info" href="{% url 'friend_list' %}">Список друзей</a></p>
+  <p><a class="btn btn-outline-info" href="{% url 'books_list' %}">Просмотреть/Редактировать выдачу книг</a></p>
+</body>  
+</html>
